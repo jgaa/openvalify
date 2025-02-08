@@ -2,7 +2,7 @@
 #include <iostream>
 #include <array>
 #include <memory>
-#include <ctime>
+#include <chrono>
 
 #include "openvalify/OpenValify.h"
 #include "openvalify/logging.h"
@@ -19,6 +19,19 @@ using namespace boost::asio::ssl;
 //using namespace boost::beast;
 using tcp = boost::asio::ip::tcp;
 
+std::ostream& operator << (std::ostream& o, const openvalify::CertInfo::Result& result) {
+    constexpr std::array<string_view, 7> names = {
+        "OK",
+        "EXPIRED",
+        "EXPIRES_SOON",
+        "NO_CERT",
+        "UNABLE_TO_CONNECT",
+        "FAILED_TO_RESOLVE",
+        "GENERIC_ERROR"
+    };
+
+    return o << names.at(static_cast<size_t>(result));
+}
 
 namespace  openvalify {
 
@@ -209,6 +222,21 @@ boost::asio::awaitable<CertInfo> OpenValify::checkCert(boost::asio::ip::tcp::end
         }
 
         LOG_TRACE_N << "Successfully retrieved certificate for " << fqdn;
+
+        // Check if the certificate has expired
+        const auto now = time(nullptr);
+        if (status.expires < now) {
+            ci.result = CertInfo::Result::EXPIRED;
+            LOG_INFO_N << "Certificate for " << fqdn << " has expired";
+        } else {
+            constexpr auto secs_in_day = 60 * 60 * 24;
+            const auto limit = now + secs_in_day * config_.expires_soon_days;
+            if (status.expires < limit) {
+                ci.result = CertInfo::Result::EXPIRES_SOON;
+                LOG_INFO_N << "Certificate for " << fqdn << " expires soon";
+            }
+        }
+
         ci.status = std::move(status);
 
     } catch (boost::system::system_error &e) {

@@ -53,8 +53,9 @@ int main(int argc, char* argv[]) {
 
         // Handle --help
         if (vm.count("help")) {
-            std::cout << filesystem::path(argv[0]).stem().string() << " [options] fqdn ..." << endl;
+            std::cout << filesystem::path(argv[0]).stem().string() << " [options] [--fqdn] fqdn ..." << endl;
             cout << desc << endl;
+            cout << "Note: if you use --port, you must use --fqdn before domain names." << endl;
             return 0;
         }
 
@@ -109,7 +110,7 @@ int main(int argc, char* argv[]) {
                     if (verbose) {
                         cout << "Result for " << ci.fqdn << ":" << endl;
                         cout << " - Endpoint: " << ci.endpoint << endl;
-                        cout << " - Status: " << static_cast<int>(ci.result) << endl;
+                        cout << " - Status: " << ci.result << endl;
                         if (ci.status.has_value()) {
                             const auto when = chrono::system_clock::from_time_t(ci.status->expires);
                             cout << " - Expires: " << format("{:%Y-%m-%d %H:%M:%S}", when) << endl;
@@ -120,6 +121,8 @@ int main(int argc, char* argv[]) {
                     } else {
                         cout << ci.fqdn << ' '
                              << ci.endpoint
+                             << " - "
+                             << ci.result
                              << " - "
                              << (ci.status.has_value() ? format("{:%Y-%m-%d}", chrono::system_clock::from_time_t(ci.status->expires)): "Unknown"s)
                              << endl;

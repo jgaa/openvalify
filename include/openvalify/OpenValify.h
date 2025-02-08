@@ -7,6 +7,8 @@
 
 #include <thread>
 #include <deque>
+#include <optional>
+#include <iostream>
 #include <boost/asio.hpp>
 
 namespace openvalify {
@@ -18,6 +20,7 @@ struct Config {
     size_t num_threads = 2;             ///< Number of worker threads.
     unsigned connect_timeout_sec = 6;   ///< Connection timeout in seconds.
     std::vector<uint16_t> ports = {443}; ///< List of ports to check.
+    unsigned expires_soon_days = 5;    ///< Number of days before expiration to consider a certificate as "expires soon".
 };
 
 
@@ -46,6 +49,7 @@ struct CertInfo {
     enum class Result {
         OK,                  ///< Certificate is valid.
         EXPIRED,             ///< Certificate has expired.
+        EXPIRES_SOON,        ///< Certificate expires soon.
         NO_CERT,             ///< No certificate found.
         UNABLE_TO_CONNECT,   ///< Unable to connect to the server.
         FAILED_TO_RESOLVE,   ///< Failed to resolve hostname.
@@ -127,3 +131,5 @@ private:
 };
 
 } // namespace openvalify
+
+std::ostream& operator << (std::ostream& o, const openvalify::CertInfo::Result& result);
