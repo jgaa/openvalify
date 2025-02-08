@@ -47,13 +47,13 @@ OpenValifyCli -l error --sort lastviking.eu www.cloudflare.com github.com
 
 **Output**:
 ```
-lastviking.eu [2a01:7e01::f03c:91ff:fe71:2503]:443 - Unknown
-www.cloudflare.com [2606:4700::6810:7c60]:443 - Unknown
-www.cloudflare.com [2606:4700::6810:7b60]:443 - Unknown
-lastviking.eu 139.162.156.246:443 - 2025-03-31
-www.cloudflare.com 104.16.123.96:443 - 2025-04-14
-www.cloudflare.com 104.16.124.96:443 - 2025-04-14
-github.com 140.82.121.3:443 - 2026-02-05
+lastviking.eu [2a01:7e01::f03c:91ff:fe71:2503]:443 - GENERIC_ERROR - Unknown
+www.cloudflare.com [2606:4700::6810:7b60]:443 - GENERIC_ERROR - Unknown
+www.cloudflare.com [2606:4700::6810:7c60]:443 - GENERIC_ERROR - Unknown
+lastviking.eu 139.162.156.246:443 - OK - 2025-03-31
+www.cloudflare.com 104.16.124.96:443 - OK - 2025-04-14
+www.cloudflare.com 104.16.123.96:443 - OK - 2025-04-14
+github.com 140.82.121.3:443 - OK - 2026-02-05
 ```
 
 In this example, I couldn't connect to the *IPv6 addresses* returned by DNS because my internet provider doesn't support IPv6 yet.
@@ -70,8 +70,8 @@ OpenValifyCli -l error --sort --verbose  github.com
 **Output**:
 ```
 Result for github.com:
- - Endpoint: 140.82.121.4:443
- - Status: 0
+ - Endpoint: 140.82.121.3:443
+ - Status: OK
  - Expires: 2026-02-05 23:59:59.000000000
  - Issuer: /C=GB/ST=Greater Manchester/L=Salford/O=Sectigo Limited/CN=Sectigo ECC Domain Validation Secure Server CA
  - Subject: /CN=github.com
