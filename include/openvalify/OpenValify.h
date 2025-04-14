@@ -21,6 +21,8 @@ struct Config {
     unsigned connect_timeout_sec = 6;   ///< Connection timeout in seconds.
     std::vector<uint16_t> ports = {443}; ///< List of ports to check.
     unsigned expires_soon_days = 5;    ///< Number of days before expiration to consider a certificate as "expires soon".
+    bool use_ipv4 = true;          ///< Flag to use IPv4 addresses.
+    bool use_ipv6 = true;        ///< Flag to use IPv6 addresses.
 };
 
 

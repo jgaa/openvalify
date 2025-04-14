@@ -17,6 +17,7 @@ target_link_libraries(OpenValifyCli
     PRIVATE
     Boost::program_options
     OpenValify  # Assume OpenValify is defined in the root CMakeLists.txt
+    $<$<BOOL:${USE_LOGFAULT}>:logfault>
 )
 
 # Installation rules

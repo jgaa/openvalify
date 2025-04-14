@@ -1,13 +1,18 @@
 cmake_minimum_required(VERSION 3.21)
 project(OpenValify
-    VERSION 0.0.1
+    VERSION 0.1.0
     LANGUAGES CXX
 )
 
 # CMake options
 option(OPENVALIFY_BUILD_TESTS "Build tests" OFF)
 option(OPENVALIFY_BUILD_EXAMPLES "Build examples" OFF)
-option(OPENVALIFY_USE_STATIC_BOOST "Link Boost statically" OFF)
+option(OPENVALIFY_USE_STATIC_BOOST "Link Boost statically" ON)
+
+# Optionally link Boost statically
+if(OPENVALIFY_USE_STATIC_BOOST)
+    set(Boost_USE_STATIC_LIBS ON)
+endif()
 
 ## Todo [jgaa] Add a generic way to use alternative loggers
 #option(USE_LOGFAULT "Enable usage of logfault for logging" ON)
@@ -66,6 +71,7 @@ if (USE_LOGFAULT)
             endif()
         endif()
     endif()
+    set(LOGFAULT_TARGET logfault)
 endif()
 
 # Define the library
@@ -81,6 +87,7 @@ target_sources(OpenValify PRIVATE
 
 target_include_directories(OpenValify PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -88,19 +95,15 @@ target_include_directories(OpenValify PUBLIC
 target_link_libraries(OpenValify
     PUBLIC
     Boost::system
-    #Boost::asio
-    #Boost::program_options
     OpenSSL::SSL
     OpenSSL::Crypto
     ZLIB::ZLIB
     $<$<BOOL:${USE_LOGFAULT}>:logfault>
 )
 
-# Optionally link Boost statically
-if(OPENVALIFY_USE_STATIC_BOOST)
-    set_target_properties(OpenValify PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${Boost_LIBRARIES};-static"
-    )
+# Make target depend on logfault target
+if (USE_LOGFAULT)
+    add_dependencies(OpenValify logfault)
 endif()
 
 # Install library

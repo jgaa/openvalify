@@ -116,6 +116,16 @@ boost::asio::awaitable<cert_info_list_t> OpenValify::validateCertForHost(const s
         for(const auto& entry: resolved) {
             LOG_DEBUG_N << "Resolved host '" << host << "' to " << entry.endpoint().address();
 
+            if (!config_.use_ipv6 && entry.endpoint().address().is_v6()) {
+                LOG_DEBUG_N << "Skipping IPv6 address for " << host;
+                continue;
+            }
+
+            if (!config_.use_ipv4 && entry.endpoint().address().is_v4()) {
+                LOG_DEBUG_N << "Skipping IPv4 address for " << host;
+                continue;
+            }
+
             for(auto port : config_.ports) {
                 auto ep = entry.endpoint();
                 ep.port(port);
@@ -175,9 +185,11 @@ boost::asio::awaitable<CertInfo> OpenValify::checkCert(boost::asio::ip::tcp::end
         boost::asio::steady_timer timer(ioCtx());
         timer.expires_after(std::chrono::seconds(config_.connect_timeout_sec));
         timer.async_wait([&](const boost::system::error_code& ec) {
+            LOG_TRACE_N << "Timer expired: ec=" << ec.message();
             if (ec) {
                 return;
             }
+            LOG_TRACE_N << "Cancelling SSL stream";
             ssl_stream.next_layer().close();
         });
 

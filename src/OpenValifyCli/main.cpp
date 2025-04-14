@@ -39,7 +39,10 @@ int main(int argc, char* argv[]) {
              "Log-level to use; one of 'error', 'warn', 'info', 'debug', 'trace'")
             ("verbose", po::bool_switch(&verbose), "Enable verbose output")
             ("sort", po::bool_switch(&sort_by_expiry_date), "Sort results by expiry date")
-            ("port,p", po::value<vector<uint16_t>>(&config.ports)->multitoken(), "Port(s) to check (default: 443)")
+            ("port,p", po::value<vector<uint16_t>>(&config.ports)->multitoken(),
+                "Port(s) to check (default: 443)")
+            ("ipv4", po::value(&config.use_ipv4)->default_value(config.use_ipv4), "Use IPv4")
+            ("ipv6", po::value(&config.use_ipv6)->default_value(config.use_ipv6), "Use IPv4")
             ("fqdn", po::value<vector<string>>(&fqdns)->multitoken(), "List of FQDNs to validate");
 
         // Map positional arguments to "fqdn"
