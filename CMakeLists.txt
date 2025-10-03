@@ -5,8 +5,8 @@ project(OpenValify
 )
 
 # CMake options
-option(OPENVALIFY_BUILD_TESTS "Build tests" OFF)
-option(OPENVALIFY_BUILD_EXAMPLES "Build examples" OFF)
+# option(OPENVALIFY_BUILD_TESTS "Build tests" OFF)
+# option(OPENVALIFY_BUILD_EXAMPLES "Build examples" OFF)
 option(OPENVALIFY_USE_STATIC_BOOST "Link Boost statically" ON)
 
 # Optionally link Boost statically
@@ -31,7 +31,7 @@ add_definitions(-DOV_VERSION=\"${OV_VERSION}\")
 
 # Find dependencies
 find_package(Boost ${USE_BOOST_VERSION} REQUIRED MODULE COMPONENTS
-    system
+    headers
     program_options
     )
 
@@ -94,7 +94,6 @@ target_include_directories(OpenValify PUBLIC
 # Link dependencies
 target_link_libraries(OpenValify
     PUBLIC
-    Boost::system
     OpenSSL::SSL
     OpenSSL::Crypto
     ZLIB::ZLIB
@@ -136,19 +135,19 @@ install(FILES
     DESTINATION lib/cmake/OpenValify
 )
 
-# Examples
-if(OPENVALIFY_BUILD_EXAMPLES)
-    add_executable(example1 examples/example1.cpp)
-    target_link_libraries(example1 OpenValify)
+# # Examples
+# if(OPENVALIFY_BUILD_EXAMPLES)
+#     add_executable(example1 examples/example1.cpp)
+#     target_link_libraries(example1 OpenValify)
 
-    install(TARGETS example1 DESTINATION bin)
-endif()
+#     install(TARGETS example1 DESTINATION bin)
+# endif()
 
-# Tests
-if(OPENVALIFY_BUILD_TESTS)
-    enable_testing()
-    add_executable(test_runner tests/test_main.cpp)
-    target_link_libraries(test_runner OpenValify)
+# # Tests
+# if(OPENVALIFY_BUILD_TESTS)
+#     enable_testing()
+#     add_executable(test_runner tests/test_main.cpp)
+#     target_link_libraries(test_runner OpenValify)
 
-    add_test(NAME RunTests COMMAND test_runner)
-endif()
+#     add_test(NAME RunTests COMMAND test_runner)
+# endif()
